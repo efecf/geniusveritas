@@ -1,0 +1,98 @@
+/* Container for our custom toolbar */
+.genius-custom-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+/* Container for our custom dropdown */
+.genius-custom-dropdown-container {
+  position: relative;
+}
+
+.genius-custom-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 5px;
+  min-width: 180px;
+}
+
+.genius-custom-dropdown-menu.show {
+  display: block;
+}
+
+.genius-custom-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.genius-custom-dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+
+/* Önizleme Butonu Stili */
+.genius-preview-btn {
+  margin-left: 10px;
+}
+
+.genius-preview-btn.active-preview,
+.genius-preview-btn.active-preview:hover,
+.genius-preview-btn.active-preview:focus {
+  background-color: rgb(0, 0, 0) !important;
+  color: rgb(255, 255, 255) !important;
+  border-color: rgb(0, 0, 0) !important;
+}
+
+.genius-preview-btn svg,
+.genius-preview-btn:hover svg,
+.genius-preview-btn.active-preview svg,
+.genius-preview-btn.active-preview:hover svg,
+.genius-preview-btn.active-preview:focus svg {
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
+/* Metadata Tags Dropdown Toggle */
+.genius-metadata-tags-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.15s ease;
+}
+
+.genius-metadata-tags-toggle:hover {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.genius-metadata-tags-menu {
+  margin-top: 4px;
+}

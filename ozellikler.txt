@@ -1,0 +1,17 @@
+ŞARKI SAYFASI:
+edit lyrics:
+- Başlıklar tuşu
+- İtalik, bold ve parantez tuşu
+- Seçili yazıyı kolayca paranteze alma
+açıklama:
+- önizleme tuşu
+- seçili yazıya link yapıştırınca oto markdown
+- seçili yazıya tırnak, parantezler ve yıldız ekleme
+- markdown dropdown menüsü
+- italik tuşu
+diğer:
+- QA şablonları
+- kapak kontrolü
+ALBÜM SAYFASI:
+- türkçe tracklist kopyalama
+- biyografi yazarken başlıklar ve önizleme
