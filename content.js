@@ -1,4 +1,4 @@
-// Helper function to safely trigger React input events
+// Helper function to safely trigger React input events safanin gotunusikm
 function setNativeValue(element, value) {
   let nativeInputValueSetter = null;
   if (element.tagName === 'TEXTAREA') {
@@ -661,7 +661,7 @@ function injectPreviewButton(toolbar) {
   btnContainer.appendChild(btn);
   btnContainer.appendChild(italicBtn);
   btnContainer.appendChild(markdownContainer);
-  
+
   // İçine ekle (Add image butonunun sağına)
   toolbar.style.display = 'flex';
   toolbar.style.alignItems = 'center';
