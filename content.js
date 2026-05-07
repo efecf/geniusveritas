@@ -1309,10 +1309,12 @@ setTimeout(() => {
 document.addEventListener('paste', function (e) {
   const target = e.target;
 
-  const requiredClasses = 'TextInput-sc-bc6c267a-0 Textarea__Input-sc-295d30f3-0 OhSkS IAJeu TextEditor__TextArea-sc-a1a35f4e-1 kQiNdy AnnotationEditForm-desktop__TextEditor-sc-1330e9da-1 drjxZL'.split(' ');
-  const isValidTarget = target && target.tagName === 'TEXTAREA' && requiredClasses.every(cls => target.classList.contains(cls));
+  // Annotation editörü textarea'sını tespit et (sınıflar değişebildiği için daha esnek bir kontrol yapıyoruz)
+  const isAnnotationEditor = target && target.tagName === 'TEXTAREA' &&
+    (target.classList.contains('AnnotationEditForm-desktop__TextEditor-sc-1330e9da-1') ||
+      target.className.includes('AnnotationEditForm-desktop__TextEditor'));
 
-  if (isValidTarget) {
+  if (isAnnotationEditor) {
     const start = target.selectionStart;
     const end = target.selectionEnd;
 
@@ -1345,10 +1347,12 @@ document.addEventListener('paste', function (e) {
 document.addEventListener('keydown', function (e) {
   const target = e.target;
 
-  const requiredClasses = 'TextInput-sc-bc6c267a-0 Textarea__Input-sc-295d30f3-0 OhSkS IAJeu TextEditor__TextArea-sc-a1a35f4e-1 kQiNdy AnnotationEditForm-desktop__TextEditor-sc-1330e9da-1 drjxZL'.split(' ');
-  const isValidTarget = target && target.tagName === 'TEXTAREA' && requiredClasses.every(cls => target.classList.contains(cls));
+  // Annotation editörü textarea'sını tespit et
+  const isAnnotationEditor = target && target.tagName === 'TEXTAREA' &&
+    (target.classList.contains('AnnotationEditForm-desktop__TextEditor-sc-1330e9da-1') ||
+      target.className.includes('AnnotationEditForm-desktop__TextEditor'));
 
-  if (isValidTarget && (e.key === '"' || e.key === '*' || e.key === '(' || e.key === ')' || e.key === '[' || e.key === '{')) {
+  if (isAnnotationEditor && (e.key === '"' || e.key === '*' || e.key === '(' || e.key === ')' || e.key === '[' || e.key === '{')) {
     const start = target.selectionStart;
     const end = target.selectionEnd;
 
