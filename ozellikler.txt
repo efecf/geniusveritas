@@ -13,6 +13,7 @@ diğer:
 - QA şablonları
 - kapak kontrolü
 - spotify kapak indirme
+- gradyan tester
 ALBÜM SAYFASI:
 - türkçe tracklist kopyalama
 - biyografi yazarken başlıklar ve önizleme
