@@ -96,3 +96,18 @@
 .genius-metadata-tags-menu {
   margin-top: 4px;
 }
+
+/* Kırmızı açıklamaları kaldırma seçeneği aktifse */
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"] {
+    background-color: var(--darkreader-background-e9e9e9, rgb(233, 233, 233)) !important;
+    color: var(--darkreader-text-000000, rgb(0, 0, 0)) !important;
+    transition: background-color 0.1s ease;
+}
+
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"]:hover,
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][class*="active" i],
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][class*="Active" i],
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][data-state="active"] {
+    background-color: var(--gv-primary-color, rgb(60, 167, 236)) !important;
+    color: var(--darkreader-text-ffffff, #ffffff) !important;
+}

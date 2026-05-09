@@ -1382,7 +1382,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "testGradient") {
     currentTestedColors = { color1: request.color1, color2: request.color2 };
     const header = document.querySelector('[data-testid="song-header"]') || document.querySelector('[class*="SongHeader-desktop__Container"]');
-    
+
     if (header) {
       // Create or update a specific style tag to ensure it overrides React styles safely
       let styleTag = document.getElementById("genius-veritas-tester-style");
@@ -1391,7 +1391,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         styleTag.id = "genius-veritas-tester-style";
         document.head.appendChild(styleTag);
       }
-      
+
       styleTag.textContent = `
         [data-testid="song-header"], 
         [class*="SongHeader-desktop__Container"],
@@ -1404,12 +1404,47 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             background-image: none !important;
         }
       `;
-      
+
       sendResponse({ success: true });
     } else {
-      sendResponse({ success: false, message: "Genius başlık (header) alanı bulunamadı." });
+      sendResponse({ success: false, message: "Şarkı sayfası bulunamadı." });
     }
-    
+
     return true; // Asynchronous response required flag not strictly necessary here, but good practice
   }
+
+  if (request.action === "toggleRedAnnotations") {
+    if (request.state) {
+      document.documentElement.classList.add('gv-remove-red-annotations');
+    } else {
+      document.documentElement.classList.remove('gv-remove-red-annotations');
+    }
+    sendResponse({ success: true });
+    return false;
+  }
 });
+
+// Load settings on startup
+chrome.storage.local.get(['removeRedAnnotations'], (result) => {
+  if (result.removeRedAnnotations) {
+    document.documentElement.classList.add('gv-remove-red-annotations');
+  }
+});
+
+// Sürekli olarak sayfanın ana rengini (gradyanın ilk rengi) tespit et
+function gvUpdatePrimaryColor() {
+  const header = document.querySelector('[data-testid="song-header"]') || document.querySelector('[class*="SongHeader-desktop__Container"]');
+  if (header) {
+    const style = window.getComputedStyle(header);
+    const bgImage = style.backgroundImage;
+    if (bgImage && bgImage.includes('linear-gradient')) {
+      const colorRegex = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/g;
+      const matches = [...bgImage.matchAll(colorRegex)];
+      if (matches.length >= 1) {
+        document.documentElement.style.setProperty('--gv-primary-color', `rgb(${matches[0][1]}, ${matches[0][2]}, ${matches[0][3]})`);
+      }
+    }
+  }
+}
+setInterval(gvUpdatePrimaryColor, 1500);
+gvUpdatePrimaryColor();

@@ -14,6 +14,7 @@ diğer:
 - kapak kontrolü
 - spotify kapak indirme
 - gradyan tester
+- editorler için kırmızı anno fix
 ALBÜM SAYFASI:
 - türkçe tracklist kopyalama
 - biyografi yazarken başlıklar ve önizleme

@@ -192,4 +192,44 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // --- Tabs Logic ---
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            tab.classList.add('active');
+            const target = tab.getAttribute('data-target');
+            document.getElementById(target).classList.add('active');
+        });
+    });
+
+    // --- Options Logic ---
+    const toggleRedAnnotations = document.getElementById('toggle-red-annotations');
+    
+    // Load state
+    chrome.storage.local.get(['removeRedAnnotations'], (result) => {
+        toggleRedAnnotations.checked = !!result.removeRedAnnotations;
+    });
+
+    // Save state
+    toggleRedAnnotations.addEventListener('change', (e) => {
+        const isChecked = e.target.checked;
+        chrome.storage.local.set({ removeRedAnnotations: isChecked });
+        
+        // Notify active tab
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const currentTab = tabs[0];
+            if (currentTab && currentTab.url && currentTab.url.includes("genius.com")) {
+                chrome.tabs.sendMessage(currentTab.id, {
+                    action: "toggleRedAnnotations",
+                    state: isChecked
+                }).catch(() => {});
+            }
+        });
+    });
 });

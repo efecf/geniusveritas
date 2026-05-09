@@ -13,9 +13,19 @@
     "clipboardRead",
     "clipboardWrite",
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "content_scripts": [
+    {
+      "matches": [
+        "*://*.genius.com/*"
+      ],
+      "js": [
+        "src/ozellikler/preload.js"
+      ],
+      "run_at": "document_start"
+    },
     {
       "matches": [
         "*://*.genius.com/*"
