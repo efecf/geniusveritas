@@ -4,14 +4,16 @@
   "version": "1.0",
   "description": "Genius Türkiye için Chorme eklentisi.",
   "icons": {
-    "16": "ico/icon.png",
-    "32": "ico/icon.png",
-    "48": "ico/icon.png",
-    "128": "ico/icon.png"
+    "16": "src/ico/icon.png",
+    "32": "src/ico/icon.png",
+    "48": "src/ico/icon.png",
+    "128": "src/ico/icon.png"
   },
   "permissions": [
     "clipboardRead",
-    "clipboardWrite"
+    "clipboardWrite",
+    "activeTab",
+    "scripting"
   ],
   "content_scripts": [
     {
@@ -19,11 +21,24 @@
         "*://*.genius.com/*"
       ],
       "css": [
-        "content.css"
+        "src/css/content.css"
       ],
       "js": [
-        "content.js"
+        "src/ozellikler/songpage.js",
+        "src/ozellikler/albumpage.js"
+      ]
+    },
+    {
+      "matches": [
+        "*://open.spotify.com/*"
+      ],
+      "js": [
+        "src/ozellikler/spotify.js"
       ]
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Genius Veritas"
+  }
 }

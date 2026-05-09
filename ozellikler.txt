@@ -12,6 +12,7 @@ açıklama:
 diğer:
 - QA şablonları
 - kapak kontrolü
+- spotify kapak indirme
 ALBÜM SAYFASI:
 - türkçe tracklist kopyalama
 - biyografi yazarken başlıklar ve önizleme

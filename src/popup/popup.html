@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genius Veritas</title>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1>Genius Veritas</h1>
+        <p>Gelişmiş Araç Kutusu</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Gradyan Önizleme</h2>
+        </div>
+        <div class="card-body">
+            <div class="color-pickers">
+                <div class="color-group">
+                    <label for="color1">Renk 1 (Üst)</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="color1" value="#dc7434">
+                        <input type="text" id="hex1" value="#dc7434" maxlength="7">
+                    </div>
+                    <div class="contrast-result" id="contrast1">
+                        <span class="badge badge-checking">...</span>
+                        <span class="contrast-ratio"></span>
+                    </div>
+                </div>
+                <div class="color-group">
+                    <label for="color2">Renk 2 (Alt)</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="color2" value="#692511">
+                        <input type="text" id="hex2" value="#692511" maxlength="7">
+                    </div>
+                    <div class="contrast-result" id="contrast2">
+                        <span class="badge badge-checking">...</span>
+                        <span class="contrast-ratio"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-box" id="preview-box">
+                <span class="preview-text">Şarkı Başlığı</span>
+            </div>
+
+            <div class="info-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="info-icon"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <p>Beyaz (#FFFFFF) metin rengiyle olan kontrast oranı WCAG standartlarına göre hesaplanmaktadır. Minimum 4.5:1 (AA) önerilir.</p>
+            </div>
+
+            <div class="actions">
+                <button id="btn-test" class="btn btn-primary">Sayfada Test Et</button>
+                <button id="btn-copy" class="btn btn-secondary">Kodu Kopyala</button>
+            </div>
+            <div id="status-msg" class="status-msg"></div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

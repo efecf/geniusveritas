@@ -1138,62 +1138,6 @@ function injectMetadataTagsDropdown() {
   }
 }
 
-function injectAlbumButton() {
-  const dropdownLists = document.querySelectorAll('[class*="StickyToolbarDropdown__DropdownItems"]');
-  dropdownLists.forEach(list => {
-    if (list.querySelector('.genius-copy-tr-item')) return;
-
-    const buttons = Array.from(list.querySelectorAll('button'));
-    const originalBtn = buttons.find(btn => btn.textContent.trim() === 'Copy Tracklist Markup');
-
-    if (originalBtn) {
-      const targetLi = originalBtn.closest('li');
-      if (!targetLi) return;
-
-      const newLi = document.createElement('li');
-      newLi.className = targetLi.className;
-      newLi.classList.add('genius-copy-tr-item');
-
-      const newBtn = document.createElement('button');
-      newBtn.className = originalBtn.className;
-      newBtn.type = 'button';
-      newBtn.textContent = 'Copy Tracklist Markup (TR)';
-
-      newBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Trigger original copy
-        originalBtn.click();
-
-        // Modify clipboard content after a short delay
-        setTimeout(async () => {
-          try {
-            const text = await navigator.clipboard.readText();
-            if (text) {
-              const newText = text.replace('Lyrics and Tracklist', 'Şarkı Sözleri ve Şarkı Listesi');
-              await navigator.clipboard.writeText(newText);
-
-              const oldText = newBtn.textContent;
-              newBtn.textContent = 'Kopyalandı (TR)';
-              const oldColor = newBtn.style.color;
-              newBtn.style.color = '#10B981';
-              setTimeout(() => {
-                newBtn.textContent = oldText;
-                newBtn.style.color = oldColor;
-              }, 2000);
-            }
-          } catch (err) {
-            console.warn('Clipboard access failed:', err);
-          }
-        }, 200);
-      });
-
-      newLi.appendChild(newBtn);
-      targetLi.after(newLi);
-    }
-  });
-}
 
 const observer = new MutationObserver((mutations) => {
   let shouldUpdateVisibility = false;
@@ -1221,10 +1165,6 @@ const observer = new MutationObserver((mutations) => {
         injectCoverArtChecker(pw);
       });
 
-      const albumDropdowns = document.querySelectorAll('[class*="StickyToolbarDropdown__DropdownItems"]');
-      albumDropdowns.forEach(() => {
-        injectAlbumButton();
-      });
 
       // Metadata Tags dropdown
       injectMetadataTagsDropdown();
@@ -1265,10 +1205,6 @@ setInterval(() => {
     injectCoverArtChecker(pw);
   });
 
-  const albumDropdowns = document.querySelectorAll('[class*="StickyToolbarDropdown__DropdownItems"]');
-  albumDropdowns.forEach(() => {
-    injectAlbumButton();
-  });
 
   injectMetadataTagsDropdown();
 }, 500);
@@ -1295,10 +1231,6 @@ setTimeout(() => {
     injectCoverArtChecker(pw);
   });
 
-  const albumDropdowns = document.querySelectorAll('[class*="StickyToolbarDropdown__DropdownItems"]');
-  albumDropdowns.forEach(() => {
-    injectAlbumButton();
-  });
 
   injectMetadataTagsDropdown();
 
@@ -1401,5 +1333,83 @@ document.addEventListener('keydown', function (e) {
   if (start !== undefined && end !== undefined && start !== end) {
     e.preventDefault();
     wrapInParentheses(target);
+  }
+});
+
+let currentTestedColors = null;
+
+// Listener for Gradient Tester popup
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "saveGradient") {
+    currentTestedColors = { color1: request.color1, color2: request.color2 };
+    sendResponse({ success: true });
+    return false;
+  }
+
+  if (request.action === "getGradient") {
+    if (currentTestedColors) {
+      sendResponse(currentTestedColors);
+      return false;
+    }
+
+    // Sayfadaki orijinal gradyanı çekmeye çalış
+    const header = document.querySelector('[data-testid="song-header"]') || document.querySelector('[class*="SongHeader-desktop__Container"]');
+    if (header) {
+      const style = window.getComputedStyle(header);
+      const bgImage = style.backgroundImage;
+      if (bgImage && bgImage.includes('linear-gradient')) {
+        const colorRegex = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/g;
+        const matches = [...bgImage.matchAll(colorRegex)];
+        if (matches.length >= 2) {
+          const toHex = (r, g, b) => {
+            return "#" + [r, g, b].map(x => {
+              const hex = parseInt(x).toString(16);
+              return hex.length === 1 ? "0" + hex : hex;
+            }).join("").toUpperCase();
+          };
+          const color1 = toHex(matches[0][1], matches[0][2], matches[0][3]);
+          const color2 = toHex(matches[1][1], matches[1][2], matches[1][3]);
+          sendResponse({ color1, color2 });
+          return false;
+        }
+      }
+    }
+
+    sendResponse({});
+    return false;
+  }
+
+  if (request.action === "testGradient") {
+    currentTestedColors = { color1: request.color1, color2: request.color2 };
+    const header = document.querySelector('[data-testid="song-header"]') || document.querySelector('[class*="SongHeader-desktop__Container"]');
+    
+    if (header) {
+      // Create or update a specific style tag to ensure it overrides React styles safely
+      let styleTag = document.getElementById("genius-veritas-tester-style");
+      if (!styleTag) {
+        styleTag = document.createElement("style");
+        styleTag.id = "genius-veritas-tester-style";
+        document.head.appendChild(styleTag);
+      }
+      
+      styleTag.textContent = `
+        [data-testid="song-header"], 
+        [class*="SongHeader-desktop__Container"],
+        [class*="About__Grid"] {
+            background-image: linear-gradient(${request.color1}, ${request.color2}) !important;
+        }
+        nav#sticky-nav,
+        [class*="StickyNav-desktop__Container"] {
+            background-color: ${request.color1} !important;
+            background-image: none !important;
+        }
+      `;
+      
+      sendResponse({ success: true });
+    } else {
+      sendResponse({ success: false, message: "Genius başlık (header) alanı bulunamadı." });
+    }
+    
+    return true; // Asynchronous response required flag not strictly necessary here, but good practice
   }
 });
