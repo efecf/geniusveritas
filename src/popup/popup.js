@@ -65,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePreview() {
         const c1 = color1Input.value;
         const c2 = color2Input.value;
-        previewBox.style.backgroundImage = `linear-gradient(${c1}, ${c2})`;
+        previewBox.style.background = `linear-gradient(180deg, ${c1} 0%, ${c2} 100%)`;
+        previewBox.style.backgroundSize = "100% 100%";
+        previewBox.style.backgroundRepeat = "no-repeat";
     }
 
     function syncColors(saveState = true) {

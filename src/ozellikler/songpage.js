@@ -502,46 +502,48 @@ function renderGeniusMarkdown(text) {
 
   let html = text;
 
-  // 0. Markdown Blockquote
-  html = html.replace(/(?:^|\n)>[ \t]*([^\n]*(\n(?!\s*\n)[^\n]*)*)/g, function (match, p1) {
-    let cleanText = p1.replace(/\n>[ \t]*/g, '\n');
-    cleanText = cleanText.replace(/\n/g, '<br>');
-    return '<blockquote><p>' + cleanText + '</p></blockquote>';
+  // 1. YouTube Link (Önce bunu yapalım ki içine p vs girmesin)
+  html = html.replace(/(?:^|\s|<p>|<br>)(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[^\s<]*)/gi, function(match, id) {
+    // Sadece ID'yi alıyoruz, eger URL'de t= veya start= varsa onlari da cikarmamiz iyi olur
+    let startParam = '';
+    const tMatch = match.match(/[?&](?:t|start)=(\d+)s?/);
+    if (tMatch) startParam = '&amp;start=' + tMatch[1];
+    
+    return `\n\n<div class="embedly_preview embedly_preview--video">\n<iframe loading="lazy" type="text/html" width="640" height="390" frameborder="0" allowfullscreen="1" src="https://www.youtube-nocookie.com/embed/${id}?modestbranding=1${startParam}&amp;showinfo=0&amp;enablejsapi=1&amp;origin=genius.com"></iframe>\n</div>\n\n`;
   });
 
-  // 1. YouTube Link
-  html = html.replace(/(?:^|\s|<p>|<br>)(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[^\s<]*)/gi,
-    '<div class="embedly_preview embedly_preview--video"><iframe width="100%" style="aspect-ratio: 16/9;" src="https://www.youtube-nocookie.com/embed/$1?modestbranding=1&showinfo=0&enablejsapi=1" frameborder="0" allowfullscreen="1"></iframe></div>'
-  );
-
-  // 2. Bold
+  // 2. Bold ve İtalik
   html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-
-  // 3. Italic
   html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
   html = html.replace(/_(.*?)_/g, '<i>$1</i>');
 
-  // 4. Link
-  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  // 3. Link
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener nofollow">$1</a>');
 
-  // 5. Paragraph wrapping
-  const blocks = html.split(/\n\s*\n/);
+  // 4. Paragraflara ayırma ve satır sonları
+  const blocks = html.split(/(?:\r?\n){2,}/); // 2 veya daha fazla satır atlaması paragrafları böler
+  
   const pBlocks = blocks.map(block => {
     let trimmed = block.trim();
-    if (trimmed.startsWith('<blockquote') || trimmed.startsWith('<div') || trimmed.startsWith('<table') || trimmed.startsWith('<hr>')) {
-      return block.replace(/\n/g, '<br>');
+    if (!trimmed) return '<p></p>';
+    
+    // Blockquote kontrolü (Sadece bloktaki ilk satırın > ile başlaması yeterli)
+    if (trimmed.startsWith('>')) {
+        const cleanText = trimmed.split('\n').map(line => {
+            const l = line.trim();
+            return l.startsWith('>') ? l.substring(1).trim() : l;
+        }).join('<br>');
+        return '<blockquote><p>' + cleanText + '</p></blockquote>';
     }
-    return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+    
+    if (trimmed.startsWith('<div class="embedly_preview') || trimmed.startsWith('<table') || trimmed.startsWith('<hr>')) {
+      return trimmed; // HTML bloklarını p içine alma
+    }
+    
+    return '<p>' + trimmed.replace(/\r?\n/g, '<br>') + '</p>';
   });
-  html = pBlocks.join('\n');
-  // Clean up excessive <br>
-  const blockTags = 'p|div|blockquote|center|h[1-6]|hr|ul|li|table';
-  html = html.replace(new RegExp(`(?:<br>\\s*)+<(${blockTags})>`, 'gi'), '<$1>');
-  html = html.replace(new RegExp(`(?:<br>\\s*)+<\\/(${blockTags})>`, 'gi'), '</$1>');
-  html = html.replace(new RegExp(`<(${blockTags})>(?:\\s*<br>)+`, 'gi'), '<$1>');
-  html = html.replace(new RegExp(`<\\/(${blockTags})>(?:\\s*<br>)+`, 'gi'), '</$1>');
-
-  return html;
+  
+  return pBlocks.join('\n\n<p></p>\n\n'); // Genius paragraflar arası boşlukları boş <p></p> ile sağlar
 }
 
 function injectPreviewButton(toolbar) {
@@ -706,7 +708,10 @@ function injectPreviewButton(toolbar) {
 
       if (!previewDiv) {
         previewDiv = document.createElement('div');
-        previewDiv.className = 'genius-markdown-preview RichText__Container-sc-e8f13224-0 bLBXID';
+        
+        const richTextSample = document.querySelector('[class*="RichText__Container"]');
+        const richTextClass = richTextSample ? richTextSample.className : 'RichText__Container-sc-39eba4fb-0 fGYLrG';
+        previewDiv.className = 'genius-markdown-preview ' + richTextClass;
 
         const computedStyle = window.getComputedStyle(textarea);
         previewDiv.style.width = '100%';
@@ -1448,3 +1453,16 @@ function gvUpdatePrimaryColor() {
 }
 setInterval(gvUpdatePrimaryColor, 1500);
 gvUpdatePrimaryColor();
+
+// Tıklanan (aktif) annotation'ın rengini seçiliyken korumak için Event tabanlı takip
+document.addEventListener('click', (e) => {
+  const annoLink = e.target.closest('a[class*="ReferentFragment-desktop__ClickTarget"]');
+  const annoContainer = e.target.closest('[class*="BaseAnnotation-desktop__Container"], [class*="Annotation__Container"]');
+  
+  if (annoLink) {
+    document.querySelectorAll('.gv-active-annotation').forEach(el => el.classList.remove('gv-active-annotation'));
+    annoLink.classList.add('gv-active-annotation');
+  } else if (!annoContainer) {
+    document.querySelectorAll('.gv-active-annotation').forEach(el => el.classList.remove('gv-active-annotation'));
+  }
+});

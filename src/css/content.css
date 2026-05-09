@@ -107,7 +107,9 @@ html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"] {
 html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"]:hover,
 html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][class*="active" i],
 html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][class*="Active" i],
-html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][data-state="active"] {
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"][data-state="active"],
+html.gv-remove-red-annotations .gv-active-annotation [class*="ReferentFragment-desktop__Highlight"],
+html.gv-remove-red-annotations [class*="ReferentFragment-desktop__Highlight"].gv-active-annotation {
     background-color: var(--gv-primary-color, rgb(60, 167, 236)) !important;
     color: var(--darkreader-text-ffffff, #ffffff) !important;
 }
