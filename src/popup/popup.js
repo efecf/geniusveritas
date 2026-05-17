@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         action: "saveGradient",
                         color1: c1,
                         color2: c2
-                    }).catch(() => {}); // ignore errors if script not injected
+                    }).catch(() => { }); // ignore errors if script not injected
                 }
             });
         }
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
-            
+
             tab.classList.add('active');
             const target = tab.getAttribute('data-target');
             document.getElementById(target).classList.add('active');
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Options Logic ---
     const toggleRedAnnotations = document.getElementById('toggle-red-annotations');
-    
+
     // Load state
     chrome.storage.local.get(['removeRedAnnotations'], (result) => {
         toggleRedAnnotations.checked = !!result.removeRedAnnotations;
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleRedAnnotations.addEventListener('change', (e) => {
         const isChecked = e.target.checked;
         chrome.storage.local.set({ removeRedAnnotations: isChecked });
-        
+
         // Notify active tab
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             const currentTab = tabs[0];
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 chrome.tabs.sendMessage(currentTab.id, {
                     action: "toggleRedAnnotations",
                     state: isChecked
-                }).catch(() => {});
+                }).catch(() => { });
             }
         });
     });

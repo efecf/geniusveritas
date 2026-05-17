@@ -43,8 +43,19 @@
         "*://open.spotify.com/*"
       ],
       "js": [
+        "src/ozellikler/spotify_main.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://open.spotify.com/*"
+      ],
+      "js": [
         "src/ozellikler/spotify.js"
-      ]
+      ],
+      "run_at": "document_start"
     }
   ],
   "action": {
