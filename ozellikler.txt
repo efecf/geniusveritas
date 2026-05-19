@@ -16,7 +16,6 @@ diğer:
 - gradyan tester
 - editörler için kırmızı anno fix
 - Spotify hız kontrolü
-
 ALBÜM SAYFASI:
 - türkçe tracklist kopyalama
 - biyografi yazarken başlıklar ve önizleme
