@@ -177,8 +177,22 @@ function insertText(baseText, itemLabel) {
     'Kısım': 'Kısım'
   };
 
-  const startPos = textarea.selectionStart !== undefined ? textarea.selectionStart : fullText.length;
-  const endPos = textarea.selectionEnd !== undefined ? textarea.selectionEnd : fullText.length;
+  let startPos = textarea.selectionStart !== undefined ? textarea.selectionStart : fullText.length;
+  let endPos = textarea.selectionEnd !== undefined ? textarea.selectionEnd : fullText.length;
+
+  if (itemLabel === 'Header' || itemLabel === 'Translation') {
+    startPos = 0;
+    endPos = 0;
+    
+    // Yalnızca başta değilse veya eksikse, her zaman 2 satır atlamasını sağla
+    let newlinesToAppend = '\n\n';
+    if (fullText.startsWith('\n\n')) {
+      newlinesToAppend = '';
+    } else if (fullText.startsWith('\n')) {
+      newlinesToAppend = '\n';
+    }
+    textToInsert += newlinesToAppend;
+  }
 
   let leftPart = fullText.substring(0, startPos);
   let rightPart = fullText.substring(endPos);
